@@ -1,0 +1,534 @@
+body {
+    margin: 0;
+    display: flex;
+    font-family: Arial, sans-serif;
+}
+
+/* Set widths as CSS variables for easy reference */
+:root {
+    --icons-sidebar-width: 56px;
+    /* adjust to your actual icons sidebar width */
+    --text-sidebar-width: 160px;
+    /* adjust to your actual text sidebar width */
+    --search-sidebar-width: 320px;
+}
+
+/* Make the sidebar container a grid with two columns: icons and text */
+.sidebar-container {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    /* icons sidebar auto-width, text sidebar takes remaining space */
+    height: 100vh;
+}
+
+/* Stack icons and text in the same order vertically */
+.sidebar-icons,
+.sidebar-text {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+    padding-top: 2px;
+    /* was 5px */
+    padding-bottom: 0;
+    white-space: nowrap;
+    background-color: #f5f5f5;
+}
+
+/* Each icon/text pair should have the same height and vertical alignment */
+.icon-section,
+.text-section {
+    display: flex;
+    align-items: center;
+    height: 28px;
+    /* was 40px, adjust as needed */
+    min-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    box-sizing: border-box;
+    color: #333;
+    cursor: pointer;
+    /* Remove width: 100% and padding-left from .text-section for better alignment */
+    width: auto;
+    padding-left: 0;
+}
+
+/* Optional: add a little left padding to text for spacing */
+.text-section {
+    padding-left: 10px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Sidebar icons: fit content width */
+.sidebar-icons {
+    align-items: center;
+    width: var(--icons-sidebar-width);
+    min-width: var(--icons-sidebar-width);
+    max-width: var(--icons-sidebar-width);
+    padding: 0 4px;
+}
+
+/* Sidebar text: shrink to fit text */
+.sidebar-text {
+    width: fit-content;
+    min-width: 0;
+    max-width: 100vw;
+    padding-left: 1px;
+    padding-right: 35px;
+    transition: width 0.3s;
+    background-color: #f5f5f5;
+}
+
+/* When collapsed, hide text sidebar */
+.sidebar-text.collapsed {
+    width: 0;
+    min-width: 0;
+    max-width: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+.icon-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    width: auto;
+    height: 28px;
+    /* was 40px, adjust as needed */
+    /* keep height for vertical alignment */
+    box-sizing: border-box;
+}
+
+.icon-section img,
+.profile-icon img {
+    width: 24px;
+    height: 24px;
+    display: block;
+    margin: 0 auto;
+}
+
+.logo-text {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+}
+
+.profile-icon img {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+}
+
+.icon-section:hover,
+.text-section:hover {
+    background-color: #e0e0e0;
+}
+
+.icon-section.active,
+.text-section.active {
+    background-color: #d0d0d0;
+    font-weight: bold;
+}
+
+.toggle-btn {
+    background: none;
+    border: none;
+    margin-top: auto;
+    margin-bottom: 10px;
+    cursor: pointer;
+    padding: 5px;
+}
+
+.toggle-btn img {
+    width: 24px;
+    height: 24px;
+    transition: transform 0.3s ease;
+}
+
+.toggle-btn.flipped img {
+    transform: rotate(180deg);
+}
+
+.main-content {
+    flex-grow: 1;
+    padding: 36px;
+    padding-left: 36px;
+    padding-right: 36px;
+    /* space between sidebars and content */
+    box-sizing: border-box;
+    overflow-y: auto;
+}
+
+/* Tablet and up (usually ≥600px, e.g. iPad, small laptops) */
+@media (min-width: 600px) {
+    .main-content {
+        padding-left: 72px;
+        padding-right: 72px;
+    }
+}
+
+/* Desktop and up (usually ≥1200px, e.g. large laptops, desktops) */
+@media (min-width: 1200px) {
+    .main-content {
+        padding-left: 150px;
+        padding-right: 150px;
+    }
+}
+
+.user-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.profile-pic {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    margin-right: 20px;
+}
+
+.user-info .stats {
+    display: flex;
+    gap: 20px;
+    margin-top: 10px;
+}
+
+.tabs {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin: 24px 0 24px 0;
+    margin-left: 100px;
+    /* 80px profile + 20px margin, adjust if needed */
+    justify-content: flex-start;
+}
+
+.tabs button {
+    background: none;
+    border: none;
+    outline: none;
+    color: #444;
+    font-size: 1.08em;
+    font-family: inherit;
+    padding: 6px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+    font-weight: 500;
+}
+
+/* Highlight on hover or when active */
+.tabs button:hover,
+.tabs button.active {
+    background: #ededed;
+    color: #222;
+}
+
+.photo-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+}
+
+.photo-item {
+    position: relative;
+}
+
+.photo-item img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.edit-icon,
+.toggle-icon {
+    position: absolute;
+    font-size: 14px;
+    background: white;
+    padding: 4px;
+    border-radius: 3px;
+    opacity: 0.8;
+}
+
+.edit-icon {
+    top: 5px;
+    right: 5px;
+}
+
+.toggle-icon {
+    top: 5px;
+    left: 5px;
+}
+
+.no-photos {
+    grid-column: 1 / -1;
+    text-align: center;
+    color: #666;
+}
+
+.sidebar-icons .logo-icon img {
+    width: auto;
+    height: auto;
+    max-width: 85%;
+    max-height: 85%;
+    //object-fit: none;
+    display: block;
+    margin: 0 auto;
+}
+
+.logo-icon img {
+    width: auto;
+    height: auto;
+    max-width: 32px;
+    max-height: 32px;
+    display: block;
+    margin: 0 auto;
+}
+
+/* Overlay search sidebar, aligned dynamically */
+.search-sidebar {
+    position: absolute;
+    top: 0;
+    /* Remove left: ... */
+    height: 100vh;
+    width: var(--search-sidebar-width, 320px);
+    background: #e0e0e0;
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.04);
+    z-index: 200;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid #ccc;
+    transition: left 0.3s, transform 0.3s, opacity 0.2s;
+}
+
+.search-sidebar.hidden {
+    transform: translateX(-100%);
+    opacity: 0;
+    pointer-events: none;
+}
+
+.search-sidebar {
+    transform: translateX(0);
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.search-header {
+    font-size: 1.2em;
+    font-weight: bold;
+    padding: 18px 18px 8px 18px;
+    background: #e0e0e0;
+}
+
+.search-input {
+    margin: 0 18px 12px 18px;
+    padding: 8px;
+    border: 1px solid #bbb;
+    border-radius: 5px;
+    font-size: 1em;
+    outline: none;
+}
+
+.search-results {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0 18px 18px 18px;
+}
+
+.search-section-title {
+    margin: 12px 0 4px 0;
+    font-weight: bold;
+    color: #555;
+}
+
+.search-divider {
+    border: none;
+    border-top: 1px solid #ddd;
+    margin: 12px 0;
+}
+
+.search-result-item {
+    padding: 6px 0;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.search-result-item:hover {
+    background: #f5f5f5;
+}
+
+.search-not-found {
+    color: #888;
+    font-style: italic;
+    margin: 8px 0;
+}
+
+.search-sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.search-sidebar-arrow {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+}
+
+.arrow-icon {
+    width: 24px;
+    height: 24px;
+}
+
+/* Flip arrow icon */
+#searchSidebarArrow.flipped {
+    transform: scaleX(-1);
+    transition: transform 0.3s;
+}
+
+.icon-section img.flipped {
+    transform: scaleX(-1);
+    transition: transform 0.3s;
+}
+
+.modal {
+    position: fixed;
+    z-index: 9999;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px;
+    /* Add padding so modal never touches screen edges */
+    box-sizing: border-box;
+}
+
+.modal.hidden {
+    display: none;
+}
+
+.modal-content {
+    background: #fff;
+    border-radius: 12px;
+    padding: 24px 36px;
+    display: flex;
+    align-items: flex-start;
+    min-width: 320px;
+    max-width: 400px;
+    /* smaller width */
+    min-height: 0;
+    max-height: 80vh;
+    /* less tall */
+    box-shadow: 0 4px 32px rgba(0, 0, 0, 0.15);
+    position: relative;
+    flex-direction: row;
+    overflow-y: auto;
+    /* allow scroll if needed */
+}
+
+.modal-image {
+    width: 80px;
+    margin-right: 24px;
+    align-self: flex-start;
+}
+
+.modal-title {
+    font-size: 2em;
+    font-weight: bold;
+    margin-bottom: 18px;
+}
+
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.input-group input[type="text"],
+.input-group input[type="email"],
+.input-group input[type="password"] {
+    padding: 10px 36px 10px 10px;
+    font-size: 1em;
+    border: 1px solid #bbb;
+    border-radius: 6px;
+}
+
+.check-icon {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px;
+    height: 20px;
+}
+
+.check-icon.hidden {
+    display: none;
+}
+
+.input-warning {
+    color: #c00;
+    font-size: 0.85em;
+    margin-top: 2px;
+    display: none;
+}
+
+.switch-auth {
+    margin-top: 10px;
+    font-size: 0.95em;
+}
+
+.switch-auth a {
+    color: #0077cc;
+    cursor: pointer;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+}
+
+.close-modal {
+    position: absolute;
+    right: 18px;
+    top: 12px;
+    font-size: 2em;
+    cursor: pointer;
+}
+
+/* Responsive adjustments for smaller screens */
+@media (max-width: 700px) {
+    .modal {
+        padding: 8px;
+    }
+
+    .modal-content {
+        flex-direction: column;
+        min-width: 90vw;
+        max-width: 98vw;
+        max-height: 98vh;
+        padding: 12px 4px;
+    }
+
+    .modal-image {
+        margin: 0 auto 12px auto;
+        width: 60px;
+    }
+}

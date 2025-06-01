@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Insnap - Home</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+    <div class="sidebar-container">
+        <!-- Icon Sidebar -->
+        <div class="sidebar-icons">
+            <div class="icon-section logo-icon">
+                <img src="./assets/InsnapIcon.png" alt="Logo" />
+            </div>
+            <div class="icon-section profile-icon">
+                <img id="iconProfilePic" src="" alt="Profile" />
+            </div>
+            <div class="icon-section"><img src="./assets/home.svg" alt="Home" /></div>
+            <div class="icon-section"><img src="./assets/upload.svg" alt="Upload" /></div>
+            <div class="icon-section"><img src="./assets/search.svg" alt="Search" /></div>
+            <div class="icon-section"><img src="./assets/feed.svg" alt="Feed" /></div>
+            <div class="icon-section"><img src="./assets/bookmark.svg" alt="Bookmarks" /></div>
+            <div class="icon-section"><img src="./assets/friends.svg" alt="Friends" /></div>
+            <div class="icon-section"><img src="./assets/settings.svg" alt="Settings" /></div>
+            <div class="icon-section"><img src="./assets/signInOut.svg" alt="Sign In/Out" /></div>
+            <button id="toggleSidebar" class="toggle-btn">
+                <img id="toggleArrow" src="./assets/arrowRight.svg" alt="Toggle" />
+            </button>
+        </div>
+
+        <!-- Text Sidebar -->
+        <div class="sidebar-text" id="textSidebar">
+            <div class="text-section logo-text">Insnap</div>
+            <div class="text-section" id="textUsername">guest</div>
+            <div class="text-section">Home</div>
+            <div class="text-section">Upload</div>
+            <div class="text-section">Search</div>
+            <div class="text-section">Feed</div>
+            <div class="text-section">Bookmarks</div>
+            <div class="text-section">Friends</div>
+            <div class="text-section">Settings</div>
+            <div class="text-section">Sign In</div>
+        </div>
+
+        <div class="search-sidebar hidden" id="searchSidebar">
+            <div class="search-sidebar-header">
+                <div class="search-header">Search</div>
+                <button id="searchSidebarArrow" class="search-sidebar-arrow">
+                    <img src="./assets/arrowRight.svg" alt="Collapse Search" class="arrow-icon" />
+                </button>
+            </div>
+            <input type="text" id="searchInput" class="search-input" placeholder="Search images or accounts..." />
+            <div class="search-results" id="searchResults"></div>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="user-header">
+            <img id="mainProfilePic" class="profile-pic" src="" alt="Main Profile Picture" />
+            <div class="user-info">
+                <h2 id="mainUsername"></h2>
+                <div class="stats">
+                    <div><span id="photoCount">0</span> photos</div>
+                    <div><span id="tabCount">0</span> in tab</div>
+                </div>
+                <div class="bio" id="bioText"></div>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <button class="active" data-tab="all">All</button>
+            <button data-tab="public">Public</button>
+            <button data-tab="friends">Friends</button>
+            <button data-tab="justme">Just Me</button>
+        </div>
+
+        <div class="photo-grid" id="photoGrid"></div>
+    </div>
+
+    <div id="authModal" class="modal hidden">
+        <div class="modal-content">
+            <img src="assets/images.svg" class="modal-image" alt="Images" />
+            <div class="modal-form">
+                <div class="modal-title" id="modalTitle">Sign Up</div>
+                <form id="signupForm" class="auth-form">
+                    <div class="input-group">
+                        <label for="signupUsername">Username</label>
+                        <input type="text" id="signupUsername" required placeholder="Enter your username" />
+                        <img id="usernameCheck" class="check-icon hidden" src="assets/greenCheck.svg" alt="Valid" />
+                        <div class="input-warning" id="usernameWarning"></div>
+                    </div>
+                    <div class="input-group">
+                        <label for="signupEmail">Email</label>
+                        <input type="email" id="signupEmail" required placeholder="Enter your email" />
+                        <img id="emailCheck" class="check-icon hidden" src="assets/greenCheck.svg" alt="Valid" />
+                        <div class="input-warning" id="emailWarning"></div>
+                    </div>
+                    <div class="input-group">
+                        <label for="signupPassword">Password</label>
+                        <input type="password" id="signupPassword" required placeholder="Enter your password" />
+                        <img id="passwordCheck" class="check-icon hidden" src="assets/greenCheck.svg" alt="Valid" />
+                        <div class="input-warning" id="passwordWarning"></div>
+                    </div>
+                    <div class="input-group">
+                        <label for="signupConfirm">Confirm Password</label>
+                        <input type="password" id="signupConfirm" required placeholder="Confirm your password" />
+                        <img id="confirmCheck" class="check-icon hidden" src="assets/greenCheck.svg" alt="Valid" />
+                        <div class="input-warning" id="confirmWarning"></div>
+                    </div>
+                    <div class="input-group">
+                        <input type="checkbox" id="termsCheck" required />
+                        <label for="termsCheck">
+                            By signing up you accept the <a href="#" id="termsLink">Terms of Service</a> and
+                            <a href="#" id="privacyLink">Privacy Policy</a>
+                        </label>
+                    </div>
+                    <button type="submit" id="signupBtn" disabled>Sign Up</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- Terms/Privacy Modal -->
+    <div id="termsModal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close-modal" id="closeTerms">&times;</span>
+            <div id="termsContent">Terms of Service text here...</div>
+        </div>
+    </div>
+    <div id="privacyModal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close-modal" id="closePrivacy">&times;</span>
+            <div id="privacyContent">Privacy Policy text here...</div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
