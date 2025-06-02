@@ -274,7 +274,7 @@ body {
     height: auto;
     max-width: 85%;
     max-height: 85%;
-    //object-fit: none;
+    object-fit: none;
     display: block;
     margin: 0 auto;
 }

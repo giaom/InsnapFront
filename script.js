@@ -31,6 +31,51 @@ document.addEventListener("DOMContentLoaded", () => {
 
     renderPhotos();
 
+
+    //Preview image
+    const addressInput = document.getElementById("uploadAddress");
+    const previewImage = document.getElementById("imagePreview");
+
+    addressInput.addEventListener("input", () => {
+        const url = addressInput.value.trim();
+        if (url) {
+            previewImage.src = url;
+            previewImage.style.display = "block";
+        } else {
+            previewImage.src = "";
+            previewImage.style.display = "none";
+        }
+    });
+
+    //Upload an image
+    document.getElementById("uploadForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const Uusername = document.getElementById("uploadUsername").value;
+        const Uaddress = document.getElementById("uploadAddress").value;
+        const Uaccess = document.getElementById("uploadAccess").value;
+        const Ucaption = document.getElementById("uploadCaption").value;
+
+        try {
+            const res = await fetch("http://localhost:3001/api/upload", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ username:Uusername, address:Uaddress, access:Uaccess, caption:Ucaption })
+            });
+
+            const data = await res.json();
+            if (data.success) {
+                console.log("Uploaded: " + Uusername + Uaddress)
+            } else {
+                console.log("Upload failed: " + data.message);
+            }
+        } catch (err) {
+            console.log("Error uploading:" + err);
+        }
+    });
+
+
+
     // --- Show Sign Up modal when clicking Sign In/Out icon or "Sign In" text ---
     const authModal = document.getElementById('authModal');
     const signInOutIcon = document.querySelector('.icon-section img[alt="Sign In/Out"]');
@@ -74,9 +119,9 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
         try {
-            const res = await fetch(`http://localhost:3001/api/auth/check-username?username=${encodeURIComponent(val)}`);
+            const res = await fetch(`http://localhost:3001/api/check-username?username=${encodeURIComponent(val)}`);
             const data = await res.json();
-            if (data.taken) {
+            if (data.taken == true) {
                 usernameWarning.textContent = "Username taken, please try another.";
                 usernameWarning.style.display = "block";
                 usernameCheck.classList.add('hidden');
@@ -112,9 +157,9 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
         try {
-            const res = await fetch(`http://localhost:3001/api/auth/check-email?email=${encodeURIComponent(val)}`);
+            const res = await fetch(`http://localhost:3001/api/check-email?email=${encodeURIComponent(val)}`);
             const data = await res.json();
-            if (data.taken) {
+            if (data.taken == true) {
                 emailWarning.textContent = "Email already in use.";
                 emailWarning.style.display = "block";
                 emailCheck.classList.add('hidden');
@@ -197,24 +242,54 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById('termsCheck').addEventListener('change', checkSignupValidity);
 });
 
-// --- Photo rendering logic ---
-const photos = [];
-const photoGrid = document.getElementById("photoGrid");
+// -- Call API to register user --
 
-function renderPhotos(filter = "all") {
-    photoGrid.innerHTML = "";
+document.getElementById("signupForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const usernameS = document.getElementById("signupUsername").value;
+    const emailS = document.getElementById("signupEmail").value;
+    const passwordS = document.getElementById("signupPassword").value;
 
-    let filtered = photos;
-    if (filter === "public") {
-        filtered = photos.filter((p) => !p.owner);
-    } else if (filter === "friends" || filter === "justme") {
-        filtered = photos.filter((p) => p.owner);
+    try {
+        const res = await fetch("http://localhost:3001/api/signup", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ username: usernameS, email: emailS, password: passwordS })
+        });
+        const data = await res.json();
+        console.log(data);
+    } catch (error) {
+        console.log("Signup failed: " + error);
     }
+});
+
+function getPics() {
+
+}
+// --- Photo rendering logic ---
+const photoGrid = document.getElementById("photoGrid");
+async function fetchUserPhotos() {
+    let Gusername = "guest";
+    try {
+        const res = await fetch(`http://localhost:3001/api/user-uploads/${encodeURIComponent(Gusername)}`);
+        const data = await res.json();
+        return data;
+    } catch (e) {
+        console.log("Could not load user photos: " + e);
+        return [""];
+    }
+}
+
+async function renderPhotos(filter = "all") {
+    photoGrid.innerHTML = "";
+    let filtered = await fetchUserPhotos();
+
+    console.log("Number of photos: ", filtered.length);
 
     document.getElementById("photoCount").textContent = filtered.length;
     document.getElementById("tabCount").textContent = filtered.length;
 
-    if (filtered.length === 0) {
+    if (filtered.length == 0) {
         photoGrid.innerHTML = "<p class='no-photos'>No photos to display yet.</p>";
         return;
     }
@@ -223,9 +298,8 @@ function renderPhotos(filter = "all") {
         const div = document.createElement("div");
         div.className = "photo-item";
         div.innerHTML = `
-      <img src="${photo.url}" alt="Photo ${photo.id}" />
-      ${photo.owner ? '<div class="edit-icon" title="Edit Photo">✏️</div>' : ""}
-      ${photo.hasEdits ? '<div class="toggle-icon" title="Toggle Original/Edit">🌓</div>' : ""}
+      <img src="${photo.Address}" alt="Photo ${photo.Upload_Id}" />
+      ${photo.Caption}
     `;
         photoGrid.appendChild(div);
     });
