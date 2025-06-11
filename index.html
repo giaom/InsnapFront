@@ -13,7 +13,7 @@
         <!-- Icon Sidebar -->
         <div class="sidebar-icons">
             <div class="icon-section logo-icon">
-                <img src="./assets/InsnapIcon.png" alt="Logo" />
+                <img src="./assets/InsnapIcon.PNG" alt="Logo" />
             </div>
             <div class="icon-section profile-icon">
                 <img id="iconProfilePic" src="" alt="Profile" />
@@ -110,14 +110,17 @@
                         <img id="confirmCheck" class="check-icon hidden" src="assets/greenCheck.svg" alt="Valid" />
                         <div class="input-warning" id="confirmWarning"></div>
                     </div>
-                    <div class="input-group">
+                    <div class="input-group terms-group">
                         <input type="checkbox" id="termsCheck" required />
-                        <label for="termsCheck">
+                        <label for="termsCheck" class="terms-label">
                             By signing up you accept the <a href="#" id="termsLink">Terms of Service</a> and
                             <a href="#" id="privacyLink">Privacy Policy</a>
                         </label>
                     </div>
                     <button type="submit" id="signupBtn" disabled>Sign Up</button>
+                    <div class="switch-auth">
+                        Already have an account? <a href="#" id="switchToSignIn">Sign in</a>
+                    </div>
                 </form>
             </div>
         </div>
@@ -136,7 +139,7 @@
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <script type="module" src="script.js"></script>
 </body>
 
 </html>

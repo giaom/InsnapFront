@@ -1,3 +1,5 @@
+import { dummyAccounts, dummyPhotos } from './dummyData.js';
+
 document.addEventListener("DOMContentLoaded", () => {
     // Guest user setup
     const guestUser = {
@@ -15,10 +17,38 @@ document.addEventListener("DOMContentLoaded", () => {
     // Sidebar toggle
     const sidebar = document.getElementById("textSidebar");
     const toggleBtn = document.getElementById("toggleSidebar");
+
+    // Ensure arrow is correct on load
+    function setArrowInitialState() {
+        if (sidebar.classList.contains("collapsed")) {
+            toggleBtn.classList.remove("flipped");
+        } else {
+            toggleBtn.classList.add("flipped");
+        }
+    }
+    setArrowInitialState();
+
+    function updateMainContentPadding() {
+        const iconsSidebar = document.querySelector('.sidebar-icons');
+        const textSidebar = document.getElementById('textSidebar');
+        const mainContent = document.querySelector('.main-content');
+        const iconsWidth = iconsSidebar.offsetWidth;
+        const textWidth = textSidebar.classList.contains('collapsed') ? 0 : textSidebar.offsetWidth;
+        // Add a little extra space (e.g., 24px)
+        mainContent.style.paddingLeft = (iconsWidth + textWidth + 24) + "px";
+    }
+
     toggleBtn.addEventListener("click", () => {
         sidebar.classList.toggle("collapsed");
         toggleBtn.classList.toggle("flipped");
+        setTimeout(() => {
+            updateSearchSidebarPosition();
+            updateMainContentPadding();
+        }, 310);
     });
+
+    window.addEventListener('resize', updateMainContentPadding);
+    updateMainContentPadding();
 
     // Tabs
     document.querySelectorAll(".tabs button").forEach((btn) => {
@@ -29,20 +59,102 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
+    // --- Photo rendering logic ---
+    const photos = dummyPhotos;
+    const photoGrid = document.getElementById("photoGrid");
+
+    function renderPhotos(filter = "all") {
+        photoGrid.innerHTML = "";
+
+        // Only show photos owned by the current user (e.g., guest)
+        const currentUsername = document.getElementById("mainUsername").textContent.trim();
+        let filtered = photos.filter(photo => photo.owner === currentUsername);
+
+        document.getElementById("photoCount").textContent = filtered.length;
+        document.getElementById("tabCount").textContent = filtered.length;
+
+        if (filtered.length === 0) {
+            photoGrid.innerHTML = "<p class='no-photos'>No photos to display yet.</p>";
+            return;
+        }
+
+        filtered.forEach((photo) => {
+            const div = document.createElement("div");
+            div.className = "photo-item";
+            div.innerHTML = `
+                <img src="${photo.url}" alt="Photo ${photo.id}" />
+                ${photo.owner ? '<div class="edit-icon" title="Edit Photo">✏️</div>' : ""}
+                ${photo.hasEdits ? '<div class="toggle-icon" title="Toggle Original/Edit">🌓</div>' : ""}
+            `;
+            photoGrid.appendChild(div);
+        });
+    }
+
     renderPhotos();
 
-    // --- Show Sign Up modal when clicking Sign In/Out icon or "Sign In" text ---
+    // --- Show Auth modal when clicking Sign In/Out icon or "Sign In" text ---
     const authModal = document.getElementById('authModal');
     const signInOutIcon = document.querySelector('.icon-section img[alt="Sign In/Out"]');
     const signInText = Array.from(document.querySelectorAll('.text-section'))
         .find(el => el.textContent.trim().toLowerCase().includes("sign in"));
-
-    function showSignUpModal() {
+    const modalTitle = document.getElementById('modalTitle');
+    const signupForm = document.getElementById('signupForm');
+    const signinForm = document.createElement('form');
+    signinForm.id = 'signinForm';
+    signinForm.className = 'auth-form';
+    signinForm.innerHTML = `
+        <div class="input-group">
+            <label for="signinUsername">Username</label>
+            <input type="text" id="signinUsername" required placeholder="Enter your username" />
+        </div>
+        <div class="input-group">
+            <label for="signinPassword">Password</label>
+            <input type="password" id="signinPassword" required placeholder="Enter your password" />
+            <div class="input-warning" id="signinWarning"></div>
+        </div>
+        <button type="submit" id="signinBtn">Sign In</button>
+        <div class="switch-auth">
+            Don't have an account? <a href="#" id="switchToSignUp">Sign up</a>
+        </div>
+    `;
+    
+    const switchToSignIn = document.getElementById('switchToSignIn');
+    const switchToSignUpLink = signinForm.querySelector('#switchToSignUp');
+    
+    function showAuthModal(mode = 'signup') {
         authModal.classList.remove('hidden');
+        
+        if (mode === 'signin') {
+            modalTitle.textContent = 'Sign In';
+            signupForm.style.display = 'none';
+            
+            // Add signin form if not already in the DOM
+            if (!document.getElementById('signinForm')) {
+                signupForm.parentNode.appendChild(signinForm);
+            }
+            signinForm.style.display = 'flex';
+        } else {
+            modalTitle.textContent = 'Sign Up';
+            signupForm.style.display = 'flex';
+            if (document.getElementById('signinForm')) {
+                signinForm.style.display = 'none';
+            }
+        }
     }
 
-    signInOutIcon?.parentElement?.addEventListener('click', showSignUpModal);
-    signInText?.addEventListener('click', showSignUpModal);
+    signInOutIcon?.parentElement?.addEventListener('click', () => showAuthModal('signin'));
+    signInText?.addEventListener('click', () => showAuthModal('signin'));
+    
+    // Switch between sign up and sign in forms
+    switchToSignIn.addEventListener('click', (e) => {
+        e.preventDefault();
+        showAuthModal('signin');
+    });
+    
+    switchToSignUpLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        showAuthModal('signup');
+    });
 
     // ESC to close modal
     document.addEventListener('keydown', (e) => {
@@ -52,6 +164,43 @@ document.addEventListener("DOMContentLoaded", () => {
     // Click outside modal to close
     authModal.addEventListener('click', (e) => {
         if (e.target === authModal) authModal.classList.add('hidden');
+    });
+    
+    // Handle sign in form submission
+    signinForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const username = document.getElementById('signinUsername').value;
+        const password = document.getElementById('signinPassword').value;
+        const signinWarning = document.getElementById('signinWarning');
+        
+        // Check against dummy accounts
+        const account = dummyAccounts.find(acc => 
+            acc.username.toLowerCase() === username.toLowerCase() && 
+            acc.password === password
+        );
+        
+        if (account) {
+            // Successful login
+            signinWarning.textContent = "";
+            signinWarning.style.display = "none";
+            
+            // Update user info
+            document.getElementById("iconProfilePic").src = account.profilePic;
+            document.getElementById("mainProfilePic").src = account.profilePic;
+            document.getElementById("mainUsername").textContent = account.username;
+            document.getElementById("textUsername").textContent = account.username;
+            document.getElementById("bioText").textContent = account.bio || "No bio available.";
+            
+            // Close modal
+            authModal.classList.add('hidden');
+            
+            // Refresh photos to show the logged-in user's photos
+            renderPhotos();
+        } else {
+            // Failed login
+            signinWarning.textContent = "Invalid username or password.";
+            signinWarning.style.display = "block";
+        }
     });
 
     // --- Sign Up Validation Logic ---
@@ -86,9 +235,17 @@ document.addEventListener("DOMContentLoaded", () => {
                 usernameCheck.classList.remove('hidden');
             }
         } catch {
-            usernameWarning.textContent = "Could not check username.";
-            usernameWarning.style.display = "block";
-            usernameCheck.classList.add('hidden');
+            // Fallback: check dummy accounts for uniqueness
+            const taken = dummyAccounts.some(acc => acc.username.toLowerCase() === val.toLowerCase());
+            if (taken) {
+                usernameWarning.textContent = "Username taken (dummy).";
+                usernameWarning.style.display = "block";
+                usernameCheck.classList.add('hidden');
+            } else {
+                usernameWarning.textContent = "";
+                usernameWarning.style.display = "none";
+                usernameCheck.classList.remove('hidden');
+            }
         }
         checkSignupValidity();
     });
@@ -124,9 +281,17 @@ document.addEventListener("DOMContentLoaded", () => {
                 emailCheck.classList.remove('hidden');
             }
         } catch {
-            emailWarning.textContent = "Could not check email.";
-            emailWarning.style.display = "block";
-            emailCheck.classList.add('hidden');
+            // Fallback: check dummy accounts for uniqueness
+            const taken = dummyAccounts.some(acc => acc.email?.toLowerCase() === val.toLowerCase());
+            if (taken) {
+                emailWarning.textContent = "Email already in use (dummy).";
+                emailWarning.style.display = "block";
+                emailCheck.classList.add('hidden');
+            } else {
+                emailWarning.textContent = "";
+                emailWarning.style.display = "none";
+                emailCheck.classList.remove('hidden');
+            }
         }
         checkSignupValidity();
     });
@@ -195,63 +360,15 @@ document.addEventListener("DOMContentLoaded", () => {
     passwordInput.addEventListener('input', checkSignupValidity);
     confirmInput.addEventListener('input', checkSignupValidity);
     document.getElementById('termsCheck').addEventListener('change', checkSignupValidity);
-});
 
-// --- Photo rendering logic ---
-const photos = [];
-const photoGrid = document.getElementById("photoGrid");
-
-function renderPhotos(filter = "all") {
-    photoGrid.innerHTML = "";
-
-    let filtered = photos;
-    if (filter === "public") {
-        filtered = photos.filter((p) => !p.owner);
-    } else if (filter === "friends" || filter === "justme") {
-        filtered = photos.filter((p) => p.owner);
-    }
-
-    document.getElementById("photoCount").textContent = filtered.length;
-    document.getElementById("tabCount").textContent = filtered.length;
-
-    if (filtered.length === 0) {
-        photoGrid.innerHTML = "<p class='no-photos'>No photos to display yet.</p>";
-        return;
-    }
-
-    filtered.forEach((photo) => {
-        const div = document.createElement("div");
-        div.className = "photo-item";
-        div.innerHTML = `
-      <img src="${photo.url}" alt="Photo ${photo.id}" />
-      ${photo.owner ? '<div class="edit-icon" title="Edit Photo">✏️</div>' : ""}
-      ${photo.hasEdits ? '<div class="toggle-icon" title="Toggle Original/Edit">🌓</div>' : ""}
-    `;
-        photoGrid.appendChild(div);
-    });
-}
-
-// Dummy data for demonstration
-const accounts = [
-    { username: "guest" },
-    { username: "snapmaster" },
-    { username: "photofan" },
-    { username: "insnapper" },
-    { username: "snapqueen" },
-    { username: "john_doe" }
-];
-
-// --- Search sidebar logic ---
-document.addEventListener("DOMContentLoaded", () => {
+    // --- Search sidebar logic ---
     const searchSidebar = document.getElementById("searchSidebar");
-    const textSidebar = document.getElementById("textSidebar");
     const searchIcon = document.querySelector('.icon-section img[alt="Search"]');
     const searchSidebarArrow = document.getElementById("searchSidebarArrow");
     const searchText = Array.from(document.querySelectorAll('.text-section'))
         .find(el => el.textContent.trim().toLowerCase() === "search");
 
     function updateSearchSidebarPosition() {
-        const searchSidebar = document.getElementById("searchSidebar");
         const iconsSidebar = document.querySelector('.sidebar-icons');
         const textSidebar = document.getElementById("textSidebar");
         const iconsWidth = iconsSidebar.offsetWidth;
@@ -279,7 +396,7 @@ document.addEventListener("DOMContentLoaded", () => {
         setSearchIconFlipped(false);
     }
 
-    searchIcon.addEventListener('click', () => {
+    searchIcon?.addEventListener('click', () => {
         if (searchSidebar.classList.contains("hidden")) {
             openSearchSidebar();
         } else {
@@ -287,7 +404,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    searchSidebarArrow.addEventListener("click", closeSearchSidebar);
+    searchSidebarArrow?.addEventListener("click", closeSearchSidebar);
 
     if (searchText) {
         searchText.addEventListener('click', () => {
@@ -311,27 +428,21 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    const toggleBtn = document.getElementById("toggleSidebar");
-    toggleBtn.addEventListener("click", () => {
-        setTimeout(updateSearchSidebarPosition, 310);
-    });
-
     window.addEventListener('resize', updateSearchSidebarPosition);
 
-    searchIcon.addEventListener('click', updateArrowFlip);
-    searchSidebarArrow.addEventListener('click', updateArrowFlip);
+    searchIcon?.addEventListener('click', updateArrowFlip);
+    searchSidebarArrow?.addEventListener('click', updateArrowFlip);
 
     document.getElementById("searchInput").addEventListener("input", function () {
         const query = this.value.trim().toLowerCase();
         const resultsDiv = document.getElementById("searchResults");
 
         const imageResults = photos.filter(photo =>
-            (photo.tags || []).some(tag => tag.toLowerCase().includes(query)) ||
-            (photo.label || "").toLowerCase().includes(query) ||
-            (photo.hashtags || []).some(tag => tag.toLowerCase().includes(query))
+            (photo.hashtags || []).some(tag => tag.toLowerCase().includes(query)) ||
+            (photo.label || "").toLowerCase().includes(query)
         ).slice(0, 5);
 
-        const accountResults = accounts.filter(acc =>
+        const accountResults = dummyAccounts.filter(acc =>
             acc.username.toLowerCase().includes(query)
         ).slice(0, 5);
 
