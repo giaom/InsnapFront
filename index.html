@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 
+<script>
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    if (!currentUser) window.location.href = 'login.html';
+</script>
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -34,7 +39,9 @@
         <!-- Text Sidebar -->
         <div class="sidebar-text" id="textSidebar">
             <div class="text-section logo-text">Insnap</div>
-            <div class="text-section" id="textUsername">guest</div>
+            <div class="text-section" id="textUsername"></div>
+            ...
+            <div class="text-section" id="logoutBtn">Log Out</div>
             <div class="text-section">Home</div>
             <div class="text-section">Upload</div>
             <div class="text-section">Search</div>
@@ -79,7 +86,7 @@
 
         <div class="photo-grid" id="photoGrid"></div>
     </div>
-        <div id="uploadContainer"
+    <div id="uploadContainer"
         style="max-width: 400px; margin: 20px auto; padding: 10px; border: 1px solid #ccc; border-radius: 8px;">
         <form id="uploadForm">
             <div class="input-group" style="margin-bottom: 10px;">
@@ -177,7 +184,7 @@
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <script type="module" src="script.js"></script>
 </body>
 
 </html>

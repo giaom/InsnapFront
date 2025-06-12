@@ -423,10 +423,10 @@ body {
     align-items: flex-start;
     min-width: 320px;
     max-width: 400px;
-    /* smaller width */
+
     min-height: 0;
     max-height: 80vh;
-    /* less tall */
+
     box-shadow: 0 4px 32px rgba(0, 0, 0, 0.15);
     position: relative;
     flex-direction: row;
