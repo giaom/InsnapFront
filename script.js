@@ -89,14 +89,15 @@ function setupPreviewImage() {
 
 const photoGrid = document.getElementById("photoGrid");
 
-async function fetchUserPhotos() {
+async function fetchUserPhotos(filter) {
     const currentUser = getCurrentUser();
     try {
-        const res = await fetch(`http://localhost:3001/api/user-uploads/${encodeURIComponent(currentUser.username)}`);
-        return await res.json();
+        const res = await fetch(`http://localhost:3001/api/user-uploads/${encodeURIComponent(currentUser.username)}/${encodeURIComponent(filter)}`);
+        const data = await res.json();
+        return data;
     } catch (e) {
-        console.error("Could not fetch user photos:", e);
-        return [];
+        console.log("Could not load user photos: " + e);
+        return [""];
     }
 }
 
@@ -104,7 +105,7 @@ async function renderPhotos(filter = "all") {
     const currentUser = getCurrentUser();
     if (!currentUser) return;
 
-    const photos = await fetchUserPhotos();
+    const photos = await fetchUserPhotos(filter);
     photoGrid.innerHTML = "";
 
     document.getElementById("photoCount").textContent = photos.length;
@@ -142,3 +143,5 @@ async function fetchCurrentUser() {
         window.location.href = "/auth.html";
     }
 }
+
+

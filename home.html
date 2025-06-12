@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Insnap - Home</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+    <div class="sidebar-container">
+        <!-- Icon Sidebar -->
+        <div class="sidebar-icons">
+            <div class="icon-section logo-icon">
+                <img src="./assets/InsnapIcon.png" alt="Logo" />
+            </div>
+            <div class="icon-section profile-icon">
+                <img id="iconProfilePic" src="" alt="Profile" />
+            </div>
+            <div class="icon-section"><img src="./assets/home.svg" id="homeBtnIcon" alt="Home" /></div>
+            <div class="icon-section"><img src="./assets/upload.svg" alt="Upload" /></div>
+            <div class="icon-section"><img src="./assets/search.svg" alt="Search" /></div>
+            <div class="icon-section"><img src="./assets/feed.svg" alt="Feed" /></div>
+            <div class="icon-section"><img src="./assets/bookmark.svg" alt="Bookmarks" /></div>
+            <div class="icon-section"><img src="./assets/friends.svg" alt="Friends" /></div>
+            <div class="icon-section"><img src="./assets/settings.svg" alt="Settings" /></div>
+            <div class="icon-section"><img src="./assets/signInOut.svg" alt="Sign In/Out" /></div>
+            <button id="toggleSidebar" class="toggle-btn">
+                <img id="toggleArrow" src="./assets/arrowRight.svg" alt="Toggle" />
+            </button>
+        </div>
+
+        <!-- Text Sidebar -->
+        <div class="sidebar-text" id="textSidebar">
+            <div class="text-section logo-text">Insnap</div>
+            <div class="text-section" id="textUsername"></div>
+            ...
+            <div class="text-section" id="logoutBtn">Log Out</div>
+            <div class="text-section">Home</div>
+            <div class="text-section">Upload</div>
+            <div class="text-section">Search</div>
+            <div class="text-section">Feed</div>
+            <div class="text-section">Bookmarks</div>
+            <div class="text-section">Friends</div>
+            <div class="text-section">Settings</div>
+            <div class="text-section">Sign In</div>
+        </div>
+
+        <div class="search-sidebar hidden" id="searchSidebar">
+            <div class="search-sidebar-header">
+                <div class="search-header">Search</div>
+                <button id="searchSidebarArrow" class="search-sidebar-arrow">
+                    <img src="./assets/arrowRight.svg" alt="Collapse Search" class="arrow-icon" />
+                </button>
+            </div>
+            <input type="text" id="searchInput" class="search-input" placeholder="Search images or accounts..." />
+            <div class="search-results" id="searchResults"></div>
+        </div>
+    </div>
+
+
+    <!-- Terms/Privacy Modal -->
+    <div id="termsModal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close-modal" id="closeTerms">&times;</span>
+            <div id="termsContent">Terms of Service text here...</div>
+        </div>
+    </div>
+    <div id="privacyModal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close-modal" id="closePrivacy">&times;</span>
+            <div id="privacyContent">Privacy Policy text here...</div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script src="auth.js"></script>
+</body>
+
+
+
+</html>
