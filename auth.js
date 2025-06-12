@@ -3,7 +3,7 @@ let currentUser = null;
 async function fetchCurrentUser() {
     try {
         const res = await fetch("http://localhost:3001/api/current-user", { credentials: "include" });
-        if (res.ok) throw new Error(`Status ${res.status}`);
+        if (!res.ok) throw new Error(`Status ${res.status}`);
         const data = await res.json();
         if (data.username) {
             currentUser = data;
@@ -31,8 +31,9 @@ async function fetchCurrentUser() {
             body: JSON.stringify({ username, password })
         });
         const data = await res.json();
-        if (!res.Login) throw new Error(data.message || 'Login failed');
+        if (!data.Login) throw new Error(data.message || 'Login failed');
         currentUser = data;
+            window.location.href = 'index.html';  
         return data;
     } catch (err) {
         console.error("Login error:", err);
@@ -54,7 +55,9 @@ async function fetchCurrentUser() {
             body: JSON.stringify({ username, email, password })
         });
         const data = await res.json();
-        if (!res.ok) throw new Error(data.message || 'Signup failed');
+        if (!data.success) {
+            throw new Error(data.message || 'Signup failed');
+        }
         currentUser = data;
         return data;
     } catch (err) {
