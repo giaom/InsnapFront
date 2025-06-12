@@ -1,11 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<script src ="script.js">
-</script>
-<script src ="auth.js">
-</script>
-
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -89,12 +84,6 @@
     <div id="uploadContainer"
         style="max-width: 400px; margin: 20px auto; padding: 10px; border: 1px solid #ccc; border-radius: 8px;">
         <form id="uploadForm">
-            <div class="input-group" style="margin-bottom: 10px;">
-                <label for="uploadUsername" style="display: block; margin-bottom: 4px;">Username:</label>
-                <input type="text" id="uploadUsername" name="username"
-                    style="width: 100%; padding: 6px; box-sizing: border-box;" />
-            </div>
-
             <div class="input-group" style="margin-bottom: 10px;">
                 <label for="uploadAddress" style="display: block; margin-bottom: 4px;">Image URL:</label>
                 <input type="text" id="uploadAddress" name="address" placeholder="https://…"
@@ -184,7 +173,10 @@
         </div>
     </div>
 
-    <script type="module" src="script.js"></script>
+    <script src="script.js"></script>
+    <script src="auth.js"></script>
 </body>
+
+
 
 </html>

@@ -95,7 +95,7 @@ async function fetchUserPhotos() {
         const res = await fetch(`http://localhost:3001/api/user-uploads/${encodeURIComponent(currentUser.username)}`);
         return await res.json();
     } catch (e) {
-        console.error("Could not load user photos:", e);
+        console.error("Could not fetch user photos:", e);
         return [];
     }
 }
