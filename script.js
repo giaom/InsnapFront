@@ -268,10 +268,10 @@ function getPics() {
 }
 // --- Photo rendering logic ---
 const photoGrid = document.getElementById("photoGrid");
-async function fetchUserPhotos() {
+async function fetchUserPhotos(filter) {
     let Gusername = "guest";
     try {
-        const res = await fetch(`http://localhost:3001/api/user-uploads/${encodeURIComponent(Gusername)}`);
+        const res = await fetch(`http://localhost:3001/api/user-uploads/${encodeURIComponent(Gusername)}/${encodeURIComponent(filter)}`);
         const data = await res.json();
         return data;
     } catch (e) {
@@ -282,7 +282,7 @@ async function fetchUserPhotos() {
 
 async function renderPhotos(filter = "all") {
     photoGrid.innerHTML = "";
-    let filtered = await fetchUserPhotos();
+    let filtered = await fetchUserPhotos(filter);
 
     console.log("Number of photos: ", filtered.length);
 
