@@ -1,5 +1,32 @@
-import { fetchCurrentUser, getCurrentUser } from "./auth.js";
-import { setupSidebar, setupTabs, setupUserProfile } from "./ui.js";
+ function setupSidebar() {
+    const sidebar = document.getElementById("textSidebar");
+    const toggleBtn = document.getElementById("toggleSidebar");
+    toggleBtn.addEventListener("click", () => {
+        sidebar.classList.toggle("collapsed");
+        toggleBtn.classList.toggle("flipped");
+    });
+}
+
+ function setupTabs(renderPhotos) {
+    document.querySelectorAll(".tabs button").forEach((btn) => {
+        btn.addEventListener("click", () => {
+            document.querySelector(".tabs button.active")?.classList.remove("active");
+            btn.classList.add("active");
+            renderPhotos(btn.dataset.tab);
+        });
+    });
+}
+
+ function setupUserProfile() {
+    const user = getCurrentUser();
+    if (!user) return;
+
+    document.getElementById("iconProfilePic").src = user.profilePic || "./assets/defaultPfp.png";
+    document.getElementById("mainProfilePic").src = user.profilePic || "./assets/defaultPfp.png";
+    document.getElementById("mainUsername").textContent = user.username;
+    document.getElementById("textUsername").textContent = user.username;
+    document.getElementById("bioText").textContent = user.bio || "Welcome to Insnap!";
+}
 
 document.addEventListener("DOMContentLoaded", async () => {
     await fetchCurrentUser();
@@ -97,4 +124,21 @@ async function renderPhotos(filter = "all") {
         `;
         photoGrid.appendChild(div);
     });
+}
+
+async function fetchCurrentUser() {
+    try {
+        const res = await fetch("http://localhost:3001/api/current-user", { credentials: "include" });
+        if (!res.ok) throw new Error(`Status ${res.status}`);
+        const data = await res.json();
+        if (data.username) {
+            currentUser = data;
+            return currentUser;
+        } else {
+            window.location.href = "/auth.html";  // redirect to combined auth page
+        }
+    } catch (err) {
+        console.error("Fetch user failed:", err);
+        window.location.href = "/auth.html";
+    }
 }
